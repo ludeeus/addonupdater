@@ -1,6 +1,11 @@
 """Setup configuration."""
+import os
 import time
 import setuptools
+
+
+for key in os.environ:
+    print(key)
 
 VERSION = str(time.time()).split('.')[0]
 
