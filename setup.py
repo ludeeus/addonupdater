@@ -1,19 +1,13 @@
 """Setup configuration."""
 import os
-import time
 import setuptools
 
-
-for key in os.environ:
-    print(key)
-
-VERSION = str(time.time()).split('.')[0]
 
 with open("README.md", "r") as fh:
     LONG = fh.read()
 setuptools.setup(
     name="addonupdater",
-    version=VERSION,
+    version=str(os.environ['TRAVIS_BUILD_NUMBER']).split('.')[0],
     author="Joakim Sorensen",
     author_email="ludeeus@gmail.com",
     description="",
