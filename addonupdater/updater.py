@@ -8,7 +8,6 @@ requirements from pypi:
 from alpinepkgs.packages import get_package
 from github import Github
 
-TOKEN = '45663eb3dd46077ee85ffb39126caf253e7321bf'
 COMMIT_MSG = ':arrow_up: Upgrades {} to version {}'
 REPO = "{}/{}"
 ORG = 'hassio-addons'

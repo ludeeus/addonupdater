@@ -21,7 +21,7 @@ setuptools.setup(
     ),
     entry_points={
         'console_scripts': [
-            'addonupdater = .cli:cli'
+            'addonupdater = addonupdater.cli:cli'
         ]
     }
 )
