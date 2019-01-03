@@ -5,6 +5,8 @@ requirements from pypi:
 - alpinepkgs
 - PyGithub
 """
+import requests
+
 from alpinepkgs.packages import get_package
 from github import Github
 
@@ -73,7 +75,6 @@ class AddonUpdater():
                                     'branch': branch,
                                     'version': version,
                                     'search_string': pkg}
-
                             packages.append(this)
 
         for pkg in packages:
@@ -101,22 +102,63 @@ class AddonUpdater():
                 file = "{}/Dockerfile".format(self.name)
                 remote_file = self.get_file_obj(file)
 
-                search_string_dict = package['search_string'].split('=')
-                replace_string = search_string_dict[0] + '=' + package['version']
+                search_string = package['search_string'].split('=')
+                replace_string = search_string[0] + '=' + package['version']
 
                 new_content = self.get_file_content(remote_file)
                 new_content = new_content.replace(package['search_string'],
                                                   replace_string)
                 self.commit(file, msg, new_content, remote_file.sha)
 
-
-
     def update_pip(self):
         """Get APK packages in use with updates."""
-        print("pip upgrades are not yet implemented")
+        file = "{}/Dockerfile".format(self.name)
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        run = masterfile.split('RUN')[1].split('LABEL')[0]
+        packages = []
+        updates = []
+        if 'pip' in run:
+            cmds = run.split('&&')
+            for cmd in cmds:
+                if 'pip install' in cmd:
+                    all_apk_lines = cmd.replace(' ', '').split('\\\n')
+                    for pkg in all_apk_lines:
+                        if '==' in pkg:
+                            package = pkg.split('==')[0]
+                            version = pkg.split('==')[1]
 
+                            this = {'package': package,
+                                    'version': version,
+                                    'search_string': pkg}
+                            packages.append(this)
 
+        for pkg in packages:
+            pack = pkg['package']
+            url = "https://pypi.org/pypi/{}/json".format(pack)
+            data = requests.get(url).json
+            version = data['info']['version']
+            if version != pkg['version']:
+                this = {'package': pack,
+                        'version': version,
+                        'search_string': pkg['search_string']}
+                updates.append(this)
+            else:
+                print(pack, "Allready have the newest version", version)
+        if updates:
+            for package in updates:
+                msg = COMMIT_MSG.format(package['package'], package['version'])
 
+                file = "{}/Dockerfile".format(self.name)
+                remote_file = self.get_file_obj(file)
+
+                search_string = package['search_string'].split('==')
+                replace_string = search_string[0] + '==' + package['version']
+
+                new_content = self.get_file_content(remote_file)
+                new_content = new_content.replace(package['search_string'],
+                                                  replace_string)
+                self.commit(file, msg, new_content, remote_file.sha)
 
     def commit(self, path, msg, content, sha):
         """Commit changes."""

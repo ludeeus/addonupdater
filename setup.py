@@ -10,7 +10,7 @@ setuptools.setup(
     author_email="ludeeus@gmail.com",
     description="",
     long_description=LONG,
-    install_requires=['alpinepkgs', 'click', 'PyGithub'],
+    install_requires=['alpinepkgs', 'click', 'PyGithub', 'requests'],
     long_description_content_type="text/markdown",
     url="https://github.com/ludeeus/addonupdater",
     packages=setuptools.find_packages(),
