@@ -1,5 +1,4 @@
 """Setup configuration."""
-import os
 import setuptools
 
 
@@ -7,7 +6,7 @@ with open("README.md", "r") as fh:
     LONG = fh.read()
 setuptools.setup(
     name="addonupdater",
-    version=str(os.environ['TRAVIS_BUILD_NUMBER']).split('.')[0],
+    version="0.0.8",
     author="Joakim Sorensen",
     author_email="ludeeus@gmail.com",
     description="",
