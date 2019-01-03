@@ -5,6 +5,8 @@ _Update dependencies in Community add-ons._
 
 ## Install
 
+**Require Python version 3.5.3+**
+
 ```bash
 pip install addonupdater
 ```
@@ -40,6 +42,7 @@ param | alias | description
 `--addon` | `-A` | Name of the add-on, this has to match the dir that contains the `Dockerfile`.
 `--repo` | `-R` | Name of the repo for the add-on, this is optional and defaults to `addon-ADDONNAME`.
 `--test` | `None` | If this flag is used commits will be omitted.
+`--verbose` | `None` | Print more stuff to the console.
 
 ***
 

@@ -11,11 +11,13 @@ ORG = 'hassio-addons'
 class AddonUpdater():
     """Class for addon updater."""
 
-    def __init__(self, token, name, repo=None, test=False):
+    def __init__(self, token, name, repo=None, test=False, verbose=False):
         """Initilalize."""
         self.name = name
         self.repo = repo
         self.test = test
+        self.token = token
+        self.verbose = verbose
         self.github = Github(token)
 
     def update_addon(self):
@@ -23,6 +25,11 @@ class AddonUpdater():
         print("Starting upgrade sequence for", self.name)
         if self.repo is None:
             self.repo = "addon-" + self.name
+
+        if self.verbose:
+            print("Addon name", self.name)
+            print("Addon repo", self.repo)
+            print("GitHub token", self.token)
 
         # Add-on spesific updates
         if self.name == 'tautulli':
@@ -75,12 +82,17 @@ class AddonUpdater():
                 pack = pkg['package'].replace('apkadd--no-cache', "")
             else:
                 pack = pkg['package']
+            if self.verbose:
+                print("Checking versions for", pack)
             data = get_package(pack, pkg['branch'])
             package = data['package']
             if len(data['versions']) == 1:
                 version = data['versions'][0]
             else:
                 version = data['x86_64']['version']  # Fallback to x86_64
+            if self.verbose:
+                print("Current version", pkg['version'])
+                print("Available version", pkg['version'])
             if version != pkg['version']:
                 this = {'package': package,
                         'version': version,
@@ -137,9 +149,14 @@ class AddonUpdater():
                 pack = pkg['package'].replace('pipinstall', "")
             else:
                 pack = pkg['package']
+            if self.verbose:
+                print("Checking versions for", pack)
             url = "https://pypi.org/pypi/{}/json".format(pack)
             data = requests.get(url).json()
             version = data['info']['version']
+            if self.verbose:
+                print("Current version", pkg['version'])
+                print("Available version", pkg['version'])
             if version != pkg['version']:
                 this = {'package': pack,
                         'version': version,
@@ -168,6 +185,11 @@ class AddonUpdater():
         if not self.test:
             repository = "{}/{}".format(ORG, self.repo)
             ghrepo = self.github.get_repo(repository)
+            if self.verbose:
+                print("Repository", repository)
+                print("Path", path)
+                print("Msg", msg)
+                print("Sha", sha)
             print(ghrepo.update_file(path, msg, content, sha))
         else:
             print("Test was enabled, skipping commit")
@@ -194,6 +216,9 @@ class AddonUpdater():
         file_version = masterfile.split('ENV TAUTULLI_VERSION ')[1]
         file_version = file_version.split('\n')[0]
         file_version = file_version.replace("'", "")
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
         if remote_version != file_version:
             msg = COMMIT_MSG.format('Tautulli', remote_version)
             new_content = self.get_file_content(remote_file)
@@ -212,6 +237,9 @@ class AddonUpdater():
         masterfile = self.get_file_content(remote_file)
         file_version = masterfile.split('releases/download/')[1]
         file_version = file_version.split('/')[0]
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
         if remote_version != file_version:
             msg = COMMIT_MSG.format('riot-web', remote_version)
             new_content = self.get_file_content(remote_file)
