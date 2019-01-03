@@ -6,7 +6,7 @@ with open("README.md", "r") as fh:
     LONG = fh.read()
 setuptools.setup(
     name="addonupdater",
-    version="0.0.8",
+    version="0.0.9",
     author="Joakim Sorensen",
     author_email="ludeeus@gmail.com",
     description="",
