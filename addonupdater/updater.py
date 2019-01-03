@@ -118,10 +118,10 @@ class AddonUpdater():
         run = masterfile.split('RUN')[1].split('LABEL')[0]
         packages = []
         updates = []
-        if 'pip' in run:
+        if 'pip' in run or 'pip3' in run:
             cmds = run.split('&&')
             for cmd in cmds:
-                if 'pip install' in cmd:
+                if 'pip install' in cmd or 'pip3 install' in cmd:
                     all_apk_lines = cmd.replace(' ', '').split('\\\n')
                     for pkg in all_apk_lines:
                         if '==' in pkg:
