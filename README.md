@@ -12,9 +12,35 @@ pip install addonupdater
 ### Example
 
 ```bash
-addonupdater --token AAAAAAA --addon mqtt
-
+addonupdater --token AAAAAAAAAAAAAAAAAAAAA --addon sqlite-web --test
+Starting upgrade sequence for sqlite-web
+Checking for apk uppdates
+g++ Allready have the newest version 6.4.0-r9
+gcc Allready have the newest version 6.4.0-r9
+make Allready have the newest version 4.2.1-r2
+python3-dev Allready have the newest version 3.6.6-r0
+apache2-utils Allready have the newest version 2.4.35-r0
+nginx Allready have the newest version 1.14.2-r0
+python3 Allready have the newest version 3.6.6-r0
+cython Allready have the newest version 0.28.2-r0
+Checking for pip uppdates
+flask Allready have the newest version 1.0.2
+sqlite-web Allready have the newest version 0.3.5
+:arrow_up: Upgrades peewee to version 3.8.0
+Test was enabled, skipping commit
+:arrow_up: Upgrades datasette to version 0.26
+Test was enabled, skipping commit
 ```
+
+#### CLI options
+
+param | alias | description
+-- | -- | --
+`--token` | `-T` | An GitHub Access token with `repo` permissions.
+`--addon` | `-A` | Name of the add-on, this has to match the dir that contains the `Dockerfile`.
+`--repo` | `-R` | Name of the repo for the add-on, this is optional and defaults to `addon-ADDONNAME`.
+`--test` | `Nona` | If this flag is used commits will be omitted.
+
 
 ***
 
