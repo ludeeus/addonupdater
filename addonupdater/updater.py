@@ -27,8 +27,8 @@ class AddonUpdater():
         # Add-on spesific updates
         if self.name == 'tautulli':
             self.addon_tautulli()
-        # elif name == 'mqtt':
-        #     self.addon_mqtt()
+        elif self.name == 'matrix':
+            self.addon_matrix()
 
         # Update APK packages
         print('Checking for apk uppdates')
@@ -201,3 +201,21 @@ class AddonUpdater():
             self.commit(file, msg, new_content, remote_file.sha)
         else:
             print("Tautulli allready have the newest version", file_version)
+
+    def addon_matrix(self):
+        """Spesial updates for matrix."""
+        print("Checking riot-web version")
+        riotweb = self.github.get_repo('vector-im/riot-web')
+        remote_version = list(riotweb.get_releases())[0].title
+        file = "matrix/Dockerfile"
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('releases/download/')[1]
+        file_version = file_version.split('/')[0]
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('riot-web', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("riot-web allready have the newest version", file_version)
