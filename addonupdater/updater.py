@@ -93,7 +93,7 @@ class AddonUpdater():
             if self.verbose:
                 print("Current version", pkg['version'])
                 print("Available version", pkg['version'])
-            if version != pkg['version']:
+            if version.split()[0] != pkg['version'].split()[0]:
                 this = {'package': package,
                         'version': version,
                         'search_string': pkg['search_string']}
@@ -109,10 +109,14 @@ class AddonUpdater():
 
                 search_string = package['search_string'].split('=')
                 replace_string = search_string[0] + '=' + package['version']
+                find_string = package['search_string'].split()[0]
+
+                if self.verbose:
+                    print("Find string '"+ find_string + "'")
+                    print("Replace with '"+ replace_string + "'")
 
                 new_content = self.get_file_content(remote_file)
-                new_content = new_content.replace(package['search_string'],
-                                                  replace_string)
+                new_content = new_content.replace(find_string, replace_string)
                 self.commit(file, msg, new_content, remote_file.sha)
 
     def update_pip(self):
@@ -157,7 +161,7 @@ class AddonUpdater():
             if self.verbose:
                 print("Current version", pkg['version'])
                 print("Available version", pkg['version'])
-            if version != pkg['version']:
+            if version.split()[0] != pkg['version'].split()[0]:
                 this = {'package': pack,
                         'version': version,
                         'search_string': pkg['search_string']}
@@ -172,12 +176,15 @@ class AddonUpdater():
                 remote_file = self.get_file_obj(file)
 
                 search_string = package['search_string'].split('==')
-                replace_string = (search_string[0] + '==' +
-                                  package['version'] + ' ')
+                find_string = package['search_string'].split()[0]
+                replace_string = search_string[0] + '==' + package['version']
+
+                if self.verbose:
+                    print("Find string '"+ find_string + "'")
+                    print("Replace with '"+ replace_string + "'")
 
                 new_content = self.get_file_content(remote_file)
-                new_content = new_content.replace(package['search_string'],
-                                                  replace_string)
+                new_content = new_content.replace(find_string, replace_string)
                 self.commit(file, msg, new_content, remote_file.sha)
 
     def commit(self, path, msg, content, sha):
