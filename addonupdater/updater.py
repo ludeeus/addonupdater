@@ -136,7 +136,7 @@ class AddonUpdater():
         for pkg in packages:
             pack = pkg['package']
             url = "https://pypi.org/pypi/{}/json".format(pack)
-            data = requests.get(url).json
+            data = requests.get(url).json()
             version = data['info']['version']
             if version != pkg['version']:
                 this = {'package': pack,
