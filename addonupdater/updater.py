@@ -127,7 +127,16 @@ class AddonUpdater():
                             packages.append(this)
 
         for pkg in packages:
-            pack = pkg['package']
+            if 'pip3install--upgrade' in pkg['package']:
+                pack = pkg['package'].replace('pip3install--upgrade', "")
+            elif 'pipinstall--upgrade' in pkg['package']:
+                pack = pkg['package'].replace('pipinstall--upgrade', "")
+            elif 'pip3install' in pkg['package']:
+                pack = pkg['package'].replace('pip3install', "")
+            elif 'pipinstall' in pkg['package']:
+                pack = pkg['package'].replace('pipinstall', "")
+            else:
+                pack = pkg['package']
             url = "https://pypi.org/pypi/{}/json".format(pack)
             data = requests.get(url).json()
             version = data['info']['version']
