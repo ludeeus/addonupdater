@@ -2,11 +2,13 @@
 import time
 import setuptools
 
+VERSION = str(time.time()).split('.')[0]
+
 with open("README.md", "r") as fh:
     LONG = fh.read()
 setuptools.setup(
     name="addonupdater",
-    version=str(time.time()).split('.')[0],
+    version=VERSION,
     author="Joakim Sorensen",
     author_email="ludeeus@gmail.com",
     description="",
