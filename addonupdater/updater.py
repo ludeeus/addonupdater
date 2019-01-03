@@ -1,12 +1,5 @@
-"""
-Update dependecies for add-ons in the community add-on project.
-
-requirements from pypi:
-- alpinepkgs
-- PyGithub
-"""
+"""Update dependecies for add-ons in the community add-on project."""
 import requests
-
 from alpinepkgs.packages import get_package
 from github import Github
 
@@ -43,7 +36,6 @@ class AddonUpdater():
         # Update PIP packages
         print('Checking for pip uppdates')
         self.update_pip()
-
 
     def update_apk(self):
         """Get APK packages in use with updates."""
@@ -170,7 +162,6 @@ class AddonUpdater():
         else:
             print("Test was enabled, skipping commit")
 
-
     def get_file_obj(self, file):
         """Return the file object."""
         repository = "{}/{}".format(ORG, self.repo)
@@ -178,11 +169,9 @@ class AddonUpdater():
         obj = ghrepo.get_contents(file)
         return obj
 
-
     def get_file_content(self, obj):
         """Return the content of the file."""
         return obj.decoded_content.decode()
-
 
     def addon_tautulli(self):
         """Spesial updates for tautulli."""
