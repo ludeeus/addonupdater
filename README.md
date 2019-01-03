@@ -39,8 +39,7 @@ param | alias | description
 `--token` | `-T` | An GitHub Access token with `repo` permissions.
 `--addon` | `-A` | Name of the add-on, this has to match the dir that contains the `Dockerfile`.
 `--repo` | `-R` | Name of the repo for the add-on, this is optional and defaults to `addon-ADDONNAME`.
-`--test` | `Nona` | If this flag is used commits will be omitted.
-
+`--test` | `None` | If this flag is used commits will be omitted.
 
 ***
 
