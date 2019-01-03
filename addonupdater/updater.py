@@ -99,7 +99,7 @@ class AddonUpdater():
                         'search_string': pkg['search_string']}
                 updates.append(this)
             else:
-                print(pack, "Allready have the newest version", version)
+                print(pack, "Already have the newest version", version)
         if updates:
             for package in updates:
                 msg = COMMIT_MSG.format(package['package'], package['version'])
@@ -167,7 +167,7 @@ class AddonUpdater():
                         'search_string': pkg['search_string']}
                 updates.append(this)
             else:
-                print(pack, "Allready have the newest version", version)
+                print(pack, "Already have the newest version", version)
         if updates:
             for package in updates:
                 msg = COMMIT_MSG.format(package['package'], package['version'])
@@ -233,7 +233,7 @@ class AddonUpdater():
             new_content = new_content.replace(file_version, remote_version)
             self.commit(file, msg, new_content, remote_file.sha)
         else:
-            print("Tautulli allready have the newest version", file_version)
+            print("Tautulli already have the newest version", file_version)
 
     def addon_matrix(self):
         """Spesial updates for matrix."""
@@ -254,4 +254,4 @@ class AddonUpdater():
             new_content = new_content.replace(file_version, remote_version)
             self.commit(file, msg, new_content, remote_file.sha)
         else:
-            print("riot-web allready have the newest version", file_version)
+            print("riot-web already have the newest version", file_version)
