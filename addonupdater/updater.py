@@ -10,6 +10,7 @@ ORG = 'hassio-addons'
 
 class AddonUpdater():
     """Class for addon updater."""
+
     def __init__(self, token, name, repo=None, test=False):
         """Initilalize."""
         self.name = name
@@ -26,8 +27,8 @@ class AddonUpdater():
         # Add-on spesific updates
         if self.name == 'tautulli':
             self.addon_tautulli()
-        #elif name == 'mqtt':
-        #    self.addon_mqtt()
+        # elif name == 'mqtt':
+        #     self.addon_mqtt()
 
         # Update APK packages
         print('Checking for apk uppdates')
@@ -181,7 +182,8 @@ class AddonUpdater():
         file = "tautulli/Dockerfile"
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
-        file_version = masterfile.split('ENV TAUTULLI_VERSION ')[1].split('\n')[0]
+        file_version = masterfile.split('ENV TAUTULLI_VERSION ')[1]
+        file_version = file_version.split('\n')[0]
         file_version = file_version.replace("'", "")
         if remote_version != file_version:
             msg = COMMIT_MSG.format('Tautulli', remote_version)
