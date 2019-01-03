@@ -112,8 +112,8 @@ class AddonUpdater():
                 find_string = package['search_string'].split()[0]
 
                 if self.verbose:
-                    print("Find string '"+ find_string + "'")
-                    print("Replace with '"+ replace_string + "'")
+                    print("Find string '" + find_string + "'")
+                    print("Replace with '" + replace_string + "'")
 
                 new_content = self.get_file_content(remote_file)
                 new_content = new_content.replace(find_string, replace_string)
@@ -180,8 +180,8 @@ class AddonUpdater():
                 replace_string = search_string[0] + '==' + package['version']
 
                 if self.verbose:
-                    print("Find string '"+ find_string + "'")
-                    print("Replace with '"+ replace_string + "'")
+                    print("Find string '" + find_string + "'")
+                    print("Replace with '" + replace_string + "'")
 
                 new_content = self.get_file_content(remote_file)
                 new_content = new_content.replace(find_string, replace_string)
