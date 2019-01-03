@@ -25,6 +25,7 @@ class AddonUpdater():
 
     def create_release(self):
         """Create and publish a release."""
+        print("Creating release for", self.name, "with version", self.release)
         repository = "{}/{}".format(ORG, self.repo)
         repo = self.github.get_repo(repository)
         last_commit = list(repo.get_commits())[0].sha
@@ -58,7 +59,6 @@ class AddonUpdater():
 
     def update_addon(self):
         """Run through updates for an addon."""
-        print("Starting upgrade sequence for", self.name)
         if self.repo is None:
             self.repo = "addon-" + self.name
 
@@ -70,6 +70,7 @@ class AddonUpdater():
         if self.release is not None:
             self.create_release()
         else:
+            print("Starting upgrade sequence for", self.name)
 
             # Add-on spesific updates
             if self.name == 'tautulli':
@@ -284,7 +285,7 @@ class AddonUpdater():
         print("Checking Tautulli version")
         tautulli = self.github.get_repo('Tautulli/Tautulli')
         remote_version = list(tautulli.get_releases())[0].title.split(' ')[1]
-        file = "tautulli/Dockerfile"
+        file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
         file_version = masterfile.split('ENV TAUTULLI_VERSION ')[1]
@@ -306,7 +307,7 @@ class AddonUpdater():
         print("Checking riot-web version")
         riotweb = self.github.get_repo('vector-im/riot-web')
         remote_version = list(riotweb.get_releases())[0].title
-        file = "matrix/Dockerfile"
+        file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
         file_version = masterfile.split('releases/download/')[1]
@@ -327,7 +328,7 @@ class AddonUpdater():
         print("Checking phlex version")
         phlex = self.github.get_repo('d8ahazard/Phlex')
         remote_version = list(phlex.get_commits())[0].sha
-        file = "phlex/Dockerfile"
+        file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
         file_version = masterfile.split('Phlex/archive/')[1]

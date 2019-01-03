@@ -1,11 +1,12 @@
 """Setup configuration."""
+import time
 import setuptools
 
 with open("README.md", "r") as fh:
     LONG = fh.read()
 setuptools.setup(
     name="addonupdater",
-    version="0.0.8",
+    version=str(time.time()).split('.')[0],
     author="Joakim Sorensen",
     author_email="ludeeus@gmail.com",
     description="",
