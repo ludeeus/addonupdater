@@ -12,7 +12,8 @@ ORG = 'hassio-addons'
 class AddonUpdater():
     """Class for addon updater."""
 
-    def __init__(self, token, name, repo=None, test=False, verbose=False, release=None):
+    def __init__(self, token, name, repo=None, test=False,
+                 verbose=False, release=None):
         """Initilalize."""
         self.name = name
         self.repo = repo

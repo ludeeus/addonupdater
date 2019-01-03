@@ -43,6 +43,7 @@ param | alias | description
 `--repo` | `-R` | Name of the repo for the add-on, this is optional and defaults to `addon-ADDONNAME`.
 `--test` | `None` | If this flag is used commits will be omitted.
 `--verbose` | `None` | Print more stuff to the console.
+`--release` | `None` | Creates a new release this argument require release version eg. `v1.0.3`.
 
 ***
 
