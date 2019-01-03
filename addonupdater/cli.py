@@ -8,10 +8,11 @@ import click
 @click.option('--repo', '-R', default=None, help='Addon repo.')
 @click.option('--test', is_flag=True, help="Test run, will not commit.")
 @click.option('--verbose', is_flag=True, help="Print more stuff.")
-def cli(token, addon, repo, test, verbose):
+@click.option('--release', default=None, help="Publish a release.")
+def cli(token, addon, repo, test, verbose, release):
     """CLI for this package."""
     from addonupdater.updater import AddonUpdater
-    updater = AddonUpdater(token, addon, repo, test, verbose)
+    updater = AddonUpdater(token, addon, repo, test, verbose, release)
     updater.update_addon()
 
 

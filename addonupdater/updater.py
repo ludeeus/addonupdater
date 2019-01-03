@@ -12,14 +12,48 @@ ORG = 'hassio-addons'
 class AddonUpdater():
     """Class for addon updater."""
 
-    def __init__(self, token, name, repo=None, test=False, verbose=False):
+    def __init__(self, token, name, repo=None, test=False, verbose=False, release=None):
         """Initilalize."""
         self.name = name
         self.repo = repo
         self.test = test
         self.token = token
         self.verbose = verbose
+        self.release = release
         self.github = Github(token)
+
+    def create_release(self):
+        """Create and publish a release."""
+        repository = "{}/{}".format(ORG, self.repo)
+        repo = self.github.get_repo(repository)
+        last_commit = list(repo.get_commits())[-1].sha
+        prev_tag = list(repo.get_tags())[0].name
+        prev_tag_sha = list(repo.get_tags())[0].commit.sha
+        body = '## Changes\n\n'
+        for commit in list(repo.get_commits()):
+            if commit.sha == prev_tag_sha:
+                break
+
+            body = body + '- ' + repo.get_git_commit(commit.sha).message + '\n'
+
+        url = "https://github.com/hassio-addons/"
+        url = url + self.repo + "/compare/" + prev_tag + "..." + self.release
+        body = body + "\n\n[Changelog](" + url + ")"
+        if self.verbose:
+            print("Version", self.release)
+            print("Body")
+            print(body)
+            print("Last commit", last_commit)
+
+        if not self.test:
+            repo.create_git_tag_and_release(self.release,
+                                            '',
+                                            self.release,
+                                            body,
+                                            last_commit,
+                                            '')
+        else:
+            print("Test was enabled, skipping release")
 
     def update_addon(self):
         """Run through updates for an addon."""
@@ -32,19 +66,23 @@ class AddonUpdater():
             print("Addon repo", self.repo)
             print("GitHub token", self.token)
 
-        # Add-on spesific updates
-        if self.name == 'tautulli':
-            self.addon_tautulli()
-        elif self.name == 'matrix':
-            self.addon_matrix()
+        if self.release is not None:
+            self.create_release()
+        else:
 
-        # Update APK packages
-        print('Checking for apk uppdates')
-        self.update_apk()
+            # Add-on spesific updates
+            if self.name == 'tautulli':
+                self.addon_tautulli()
+            elif self.name == 'matrix':
+                self.addon_matrix()
 
-        # Update PIP packages
-        print('Checking for pip uppdates')
-        self.update_pip()
+            # Update APK packages
+            print('Checking for apk uppdates')
+            self.update_apk()
+
+            # Update PIP packages
+            print('Checking for pip uppdates')
+            self.update_pip()
 
     def update_apk(self):
         """Get APK packages in use with updates."""
