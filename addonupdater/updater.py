@@ -76,6 +76,8 @@ class AddonUpdater():
                 self.addon_tautulli()
             elif self.name == 'matrix':
                 self.addon_matrix()
+            elif self.name == 'phlex':
+                self.addon_phlex()
 
             # Update APK packages
             print('Checking for apk uppdates')
@@ -161,7 +163,7 @@ class AddonUpdater():
 
     def update_pip(self):
         """Get APK packages in use with updates."""
-        file = "requirements.txt"
+        file = "{}/requirements.txt".format(self.name)
         packages = []
         updates = []
         try:
@@ -237,10 +239,6 @@ class AddonUpdater():
         if updates:
             for package in updates:
                 msg = COMMIT_MSG.format(package['package'], package['version'])
-                if has_requirements:
-                    file = "requirements.txt"
-                else:
-                    file = "{}/Dockerfile".format(self.name)
                 remote_file = self.get_file_obj(file)
 
                 search_string = package['search_string'].split('==')
@@ -323,3 +321,24 @@ class AddonUpdater():
             self.commit(file, msg, new_content, remote_file.sha)
         else:
             print("riot-web already have the newest version", file_version)
+
+    def addon_phlex(self):
+        """Spesial updates for Phlex."""
+        print("Checking phlex version")
+        phlex = self.github.get_repo('d8ahazard/Phlex')
+        remote_version = list(phlex.get_commits())[-1].sha
+        file = "phlex/Dockerfile"
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('Phlex/archive/')[1]
+        file_version = file_version.split('.zip')[0]
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('Phlex', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("Phlex already have the newest version", file_version)
