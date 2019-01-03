@@ -172,7 +172,8 @@ class AddonUpdater():
                 remote_file = self.get_file_obj(file)
 
                 search_string = package['search_string'].split('==')
-                replace_string = search_string[0] + '==' + package['version']
+                replace_string = (search_string[0] + '==' +
+                                  package['version'] + ' ')
 
                 new_content = self.get_file_content(remote_file)
                 new_content = new_content.replace(package['search_string'],
