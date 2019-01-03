@@ -2,6 +2,7 @@
 import requests
 from alpinepkgs.packages import get_package
 from github import Github
+from github.GithubException import UnknownObjectException
 
 COMMIT_MSG = ':arrow_up: Upgrades {} to version {}'
 REPO = "{}/{}"
@@ -121,26 +122,52 @@ class AddonUpdater():
 
     def update_pip(self):
         """Get APK packages in use with updates."""
-        file = "{}/Dockerfile".format(self.name)
-        remote_file = self.get_file_obj(file)
-        masterfile = self.get_file_content(remote_file)
-        run = masterfile.split('RUN')[1].split('LABEL')[0]
+        file = "requirements.txt"
         packages = []
         updates = []
-        if 'pip' in run or 'pip3' in run:
-            cmds = run.split('&&')
-            for cmd in cmds:
-                if 'pip install' in cmd or 'pip3 install' in cmd:
-                    all_apk_lines = cmd.replace(' ', '').split('\\\n')
-                    for pkg in all_apk_lines:
-                        if '==' in pkg:
-                            package = pkg.split('==')[0]
-                            version = pkg.split('==')[1]
+        try:
+            repo = self.github.get_repo("{}/{}".format(ORG, self.repo))
+            repo.get_contents(file)
+            has_requirements = True
+        except UnknownObjectException:
+            has_requirements = False
+        if has_requirements:
+            if self.verbose:
+                print("This repo has a requirements.txt file")
+            remote_file = self.get_file_obj(file)
+            masterfile = self.get_file_content(remote_file)
+            lines = masterfile.split('\n')
+            if self.verbose:
+                print("Lines", lines)
+            for line in lines:
+                if self.verbose:
+                    print("Line", line)
+                if line != '':
+                    package = line.split('==')[0]
+                    version = line.split('==')[1]
+                    this = {'package': package,
+                            'version': version,
+                            'search_string': line}
+                    packages.append(this)
+        else:
+            file = "{}/Dockerfile".format(self.name)
+            remote_file = self.get_file_obj(file)
+            masterfile = self.get_file_content(remote_file)
+            run = masterfile.split('RUN')[1].split('LABEL')[0]
+            if 'pip' in run or 'pip3' in run:
+                cmds = run.split('&&')
+                for cmd in cmds:
+                    if 'pip install' in cmd or 'pip3 install' in cmd:
+                        all_apk_lines = cmd.replace(' ', '').split('\\\n')
+                        for pkg in all_apk_lines:
+                            if '==' in pkg:
+                                package = pkg.split('==')[0]
+                                version = pkg.split('==')[1]
 
-                            this = {'package': package,
-                                    'version': version,
-                                    'search_string': pkg}
-                            packages.append(this)
+                                this = {'package': package,
+                                        'version': version,
+                                        'search_string': pkg}
+                                packages.append(this)
 
         for pkg in packages:
             if 'pip3install--upgrade' in pkg['package']:
