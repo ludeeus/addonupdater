@@ -198,8 +198,10 @@ class AddonUpdater():
         if updates:
             for package in updates:
                 msg = COMMIT_MSG.format(package['package'], package['version'])
-
-                file = "{}/Dockerfile".format(self.name)
+                if has_requirements:
+                    file = "requirements.txt"
+                else:
+                    file = "{}/Dockerfile".format(self.name)
                 remote_file = self.get_file_obj(file)
 
                 search_string = package['search_string'].split('==')
