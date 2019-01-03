@@ -27,7 +27,7 @@ class AddonUpdater():
         """Create and publish a release."""
         repository = "{}/{}".format(ORG, self.repo)
         repo = self.github.get_repo(repository)
-        last_commit = list(repo.get_commits())[-1].sha
+        last_commit = list(repo.get_commits())[0].sha
         prev_tag = list(repo.get_tags())[0].name
         prev_tag_sha = list(repo.get_tags())[0].commit.sha
         body = '## Changes\n\n'
@@ -326,7 +326,7 @@ class AddonUpdater():
         """Spesial updates for Phlex."""
         print("Checking phlex version")
         phlex = self.github.get_repo('d8ahazard/Phlex')
-        remote_version = list(phlex.get_commits())[-1].sha
+        remote_version = list(phlex.get_commits())[0].sha
         file = "phlex/Dockerfile"
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
