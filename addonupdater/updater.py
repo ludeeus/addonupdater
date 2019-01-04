@@ -14,7 +14,7 @@ class AddonUpdater():
 
     def __init__(self, token, name, repo=None, test=False,
                  verbose=False, release=None, skip_apk=False, skip_pip=False,
-                 skip_custom=False):
+                 skip_custom=False, org=None):
         """Initilalize."""
         self.name = name
         self.repo = repo
@@ -24,6 +24,7 @@ class AddonUpdater():
         self.release = release
         self.skip_apk = skip_apk
         self.skip_pip = skip_pip
+        self.org = ORG if org is None else org
         self.skip_custom = skip_custom
         self.github = Github(token)
 
@@ -35,6 +36,7 @@ class AddonUpdater():
         if self.verbose:
             print("Addon name", self.name)
             print("Addon repo", self.repo)
+            print("GitHub org", self.org)
             print("GitHub token", self.token)
 
         if self.release is not None:
@@ -73,7 +75,7 @@ class AddonUpdater():
     def create_release(self):
         """Create and publish a release."""
         print("Creating release for", self.name, "with version", self.release)
-        repository = "{}/{}".format(ORG, self.repo)
+        repository = "{}/{}".format(self.org, self.repo)
         repo = self.github.get_repo(repository)
         last_commit = list(repo.get_commits())[0].sha
         prev_tag = list(repo.get_tags())[0].name
@@ -184,7 +186,7 @@ class AddonUpdater():
         packages = []
         updates = []
         try:
-            repo = self.github.get_repo("{}/{}".format(ORG, self.repo))
+            repo = self.github.get_repo("{}/{}".format(self.org, self.repo))
             repo.get_contents(file)
             has_requirements = True
         except UnknownObjectException:
@@ -274,7 +276,7 @@ class AddonUpdater():
         """Commit changes."""
         print(msg)
         if not self.test:
-            repository = "{}/{}".format(ORG, self.repo)
+            repository = "{}/{}".format(self.org, self.repo)
             ghrepo = self.github.get_repo(repository)
             if self.verbose:
                 print("Repository", repository)
@@ -287,7 +289,7 @@ class AddonUpdater():
 
     def get_file_obj(self, file):
         """Return the file object."""
-        repository = "{}/{}".format(ORG, self.repo)
+        repository = "{}/{}".format(self.org, self.repo)
         ghrepo = self.github.get_repo(repository)
         obj = ghrepo.get_contents(file)
         return obj
