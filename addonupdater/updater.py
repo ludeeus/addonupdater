@@ -23,6 +23,41 @@ class AddonUpdater():
         self.release = release
         self.github = Github(token)
 
+    def update_addon(self):
+        """Run through updates for an addon."""
+        if self.repo is None:
+            self.repo = "addon-" + self.name
+
+        if self.verbose:
+            print("Addon name", self.name)
+            print("Addon repo", self.repo)
+            print("GitHub token", self.token)
+
+        if self.release is not None:
+            self.create_release()
+        else:
+            print("Starting upgrade sequence for", self.name)
+
+            # Add-on spesific updates
+            if self.name == 'tautulli':
+                self.addon_tautulli()
+            elif self.name == 'matrix':
+                self.addon_matrix()
+            elif self.name == 'phlex':
+                self.addon_phlex()
+            elif self.name == 'magicmirror':
+                self.addon_magicmirror()
+            elif self.name == 'mqtt':
+                self.addon_mqtt()
+
+            # Update APK packages
+            print('Checking for apk uppdates')
+            self.update_apk()
+
+            # Update PIP packages
+            print('Checking for pip uppdates')
+            self.update_pip()
+
     def create_release(self):
         """Create and publish a release."""
         print("Creating release for", self.name, "with version", self.release)
@@ -56,37 +91,6 @@ class AddonUpdater():
                                             '')
         else:
             print("Test was enabled, skipping release")
-
-    def update_addon(self):
-        """Run through updates for an addon."""
-        if self.repo is None:
-            self.repo = "addon-" + self.name
-
-        if self.verbose:
-            print("Addon name", self.name)
-            print("Addon repo", self.repo)
-            print("GitHub token", self.token)
-
-        if self.release is not None:
-            self.create_release()
-        else:
-            print("Starting upgrade sequence for", self.name)
-
-            # Add-on spesific updates
-            if self.name == 'tautulli':
-                self.addon_tautulli()
-            elif self.name == 'matrix':
-                self.addon_matrix()
-            elif self.name == 'phlex':
-                self.addon_phlex()
-
-            # Update APK packages
-            print('Checking for apk uppdates')
-            self.update_apk()
-
-            # Update PIP packages
-            print('Checking for pip uppdates')
-            self.update_pip()
 
     def update_apk(self):
         """Get APK packages in use with updates."""
@@ -182,9 +186,9 @@ class AddonUpdater():
             if self.verbose:
                 print("Lines", lines)
             for line in lines:
-                if self.verbose:
-                    print("Line", line)
                 if line != '':
+                    if self.verbose:
+                        print("Line", line)
                     package = line.split('==')[0]
                     version = line.split('==')[1]
                     this = {'package': package,
@@ -284,7 +288,7 @@ class AddonUpdater():
         """Spesial updates for tautulli."""
         print("Checking Tautulli version")
         tautulli = self.github.get_repo('Tautulli/Tautulli')
-        remote_version = list(tautulli.get_releases())[0].title.split(' ')[1]
+        remote_version = list(tautulli.get_releases())[0].tag_name
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -343,3 +347,47 @@ class AddonUpdater():
             self.commit(file, msg, new_content, remote_file.sha)
         else:
             print("Phlex already have the newest version", file_version)
+
+    def addon_magicmirror(self):
+        """Spesial updates for magicmirror."""
+        print("Checking Magicmirror version")
+        magicmirror = self.github.get_repo('MichMich/MagicMirror')
+        remote_version = list(magicmirror.get_releases())[0].tag_name
+        file = "{}/Dockerfile".format(self.name)
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('ENV MM_VERSION = ')[1]
+        file_version = file_version.split('\n')[0]
+        file_version = file_version.replace('"', "")
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('Magicmirror', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("Magicmirror already have the newest version", file_version)
+
+    def addon_mqtt(self):
+        """Spesial updates for Mqtt."""
+        print("Checking hivemq-mqtt-web-client version")
+        phlex = self.github.get_repo('hivemq/hivemq-mqtt-web-client')
+        remote_version = list(phlex.get_commits())[0].sha
+        file = "{}/Dockerfile".format(self.name)
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('client/archive/')[1]
+        file_version = file_version.split('.zip')[0]
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('Hivemq-mqtt-web-client', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("Hivemq-mqtt-web-client already have the newest version",
+                  file_version)
