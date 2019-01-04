@@ -49,6 +49,8 @@ class AddonUpdater():
                 self.addon_magicmirror()
             elif self.name == 'mqtt':
                 self.addon_mqtt()
+            elif self.name == 'home-panel':
+                self.addon_home_panel()
 
             # Update APK packages
             print('Checking for apk uppdates')
@@ -391,3 +393,44 @@ class AddonUpdater():
         else:
             print("Hivemq-mqtt-web-client already have the newest version",
                   file_version)
+
+    def addon_home_panel(self):
+        """Spesial updates for Home-panel."""
+        print("Checking home-panel-api version")
+        api = self.github.get_repo('timmo001/home-panel-api')
+        remote_version = list(api.get_releases())[0].tag_name
+        file = "{}/Dockerfile".format(self.name)
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('clone --branch ')[1]
+        file_version = file_version.split(' --depth')[0]
+        file_version = file_version.replace('"', '')
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('Home-panel-api', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("Home-panel-api already have the newest version",
+                  file_version)
+        print("Checking home-panel version")
+        api = self.github.get_repo('timmo001/home-panel')
+        remote_version = list(api.get_releases())[0].tag_name
+        file = "{}/Dockerfile".format(self.name)
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('releases/download/')[1]
+        file_version = file_version.split('/')[0]
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('Home-panel', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("Home-panel already have the newest version", file_version)
