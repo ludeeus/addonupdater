@@ -57,6 +57,8 @@ class AddonUpdater():
                     self.addon_home_panel()
                 elif self.name == 'ssh':
                     self.addon_ssh()
+                elif self.name == 'tasmoadmin':
+                    self.addon_tasmoadmin()
 
             if not self.skip_apk:
                 # Update APK packages
@@ -297,8 +299,15 @@ class AddonUpdater():
     def addon_tautulli(self):
         """Spesial updates for tautulli."""
         print("Checking Tautulli version")
-        tautulli = self.github.get_repo('Tautulli/Tautulli')
-        remote_version = list(tautulli.get_releases())[0].tag_name
+        repo = self.github.get_repo('Tautulli/Tautulli')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -319,8 +328,15 @@ class AddonUpdater():
     def addon_matrix(self):
         """Spesial updates for matrix."""
         print("Checking riot-web version")
-        riotweb = self.github.get_repo('vector-im/riot-web')
-        remote_version = list(riotweb.get_releases())[0].title
+        repo = self.github.get_repo('vector-im/riot-web')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -340,8 +356,8 @@ class AddonUpdater():
     def addon_phlex(self):
         """Spesial updates for Phlex."""
         print("Checking phlex version")
-        phlex = self.github.get_repo('d8ahazard/Phlex')
-        remote_version = list(phlex.get_commits())[0].sha
+        repo = self.github.get_repo('d8ahazard/Phlex')
+        remote_version = list(repo.get_commits())[0].sha
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -361,8 +377,15 @@ class AddonUpdater():
     def addon_magicmirror(self):
         """Spesial updates for magicmirror."""
         print("Checking Magicmirror version")
-        magicmirror = self.github.get_repo('MichMich/MagicMirror')
-        remote_version = list(magicmirror.get_releases())[0].tag_name
+        repo = self.github.get_repo('MichMich/MagicMirror')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -383,8 +406,8 @@ class AddonUpdater():
     def addon_mqtt(self):
         """Spesial updates for Mqtt."""
         print("Checking hivemq-mqtt-web-client version")
-        phlex = self.github.get_repo('hivemq/hivemq-mqtt-web-client')
-        remote_version = list(phlex.get_commits())[0].sha
+        repo = self.github.get_repo('hivemq/hivemq-mqtt-web-client')
+        remote_version = list(repo.get_commits())[0].sha
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -405,8 +428,15 @@ class AddonUpdater():
     def addon_home_panel(self):
         """Spesial updates for Home-panel."""
         print("Checking home-panel-api version")
-        api = self.github.get_repo('timmo001/home-panel-api')
-        remote_version = list(api.get_releases())[0].tag_name
+        repo = self.github.get_repo('timmo001/home-panel-api')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -426,8 +456,15 @@ class AddonUpdater():
                   file_version)
 
         print("Checking home-panel version")
-        api = self.github.get_repo('timmo001/home-panel')
-        remote_version = list(api.get_releases())[0].tag_name
+        repo = self.github.get_repo('timmo001/home-panel')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -447,8 +484,15 @@ class AddonUpdater():
     def addon_ssh(self):
         """Spesial updates for SSH."""
         print("Checking hassio-cli version")
-        api = self.github.get_repo('home-assistant/hassio-cli')
-        remote_version = list(api.get_releases())[0].tag_name
+        repo = self.github.get_repo('home-assistant/hassio-cli')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -466,8 +510,15 @@ class AddonUpdater():
             print("hassio-cli already have the newest version", file_version)
 
         print("Checking ttyd version")
-        api = self.github.get_repo('tsl0922/ttyd')
-        remote_version = list(api.get_releases())[0].tag_name
+        repo = self.github.get_repo('tsl0922/ttyd')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
         file = "{}/Dockerfile".format(self.name)
         remote_file = self.get_file_obj(file)
         masterfile = self.get_file_content(remote_file)
@@ -484,3 +535,31 @@ class AddonUpdater():
             self.commit(file, msg, new_content, remote_file.sha)
         else:
             print("ttyd already have the newest version", file_version)
+
+    def addon_tasmoadmin(self):
+        """Spesial updates for tasmoadmin."""
+        print("Checking TasmoAdmin version")
+        repo = self.github.get_repo('reloxx13/TasmoAdmin')
+        releases = list(repo.get_releases())
+        index = 0
+        while True:
+            remote_version = releases[index].tag_name
+            if 'b' in remote_version:
+                index = index + 1
+            else:
+                break
+        file = "{}/Dockerfile".format(self.name)
+        remote_file = self.get_file_obj(file)
+        masterfile = self.get_file_content(remote_file)
+        file_version = masterfile.split('--branch ')[1]
+        file_version = file_version.split(' --depth')[0]
+        if self.verbose:
+            print("Current version", file_version)
+            print("Available version", remote_version)
+        if remote_version != file_version:
+            msg = COMMIT_MSG.format('TasmoAdmin', remote_version)
+            new_content = self.get_file_content(remote_file)
+            new_content = new_content.replace(file_version, remote_version)
+            self.commit(file, msg, new_content, remote_file.sha)
+        else:
+            print("TasmoAdmin already have the newest version", file_version)
