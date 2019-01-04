@@ -47,6 +47,7 @@ param | alias | description
 `--skip_apk` | `None` | Skip apk updates.
 `--skip_custom` | `None` | Skip custom updates.
 `--skip_pip` | `None` | Skip pip updates.
+`--org` | `None` | Specify GitHub org, defaults to 'hassio-addons'.
 
 ***
 
