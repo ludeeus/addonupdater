@@ -44,6 +44,9 @@ param | alias | description
 `--test` | `None` | If this flag is used commits will be omitted.
 `--verbose` | `None` | Print more stuff to the console.
 `--release` | `None` | Creates a new release this argument require release version eg. `v1.0.3`.
+`--skip_apk` | `None` | Skip apk updates.
+`--skip_custom` | `None` | Skip custom updates.
+`--skip_pip` | `None` | Skip pip updates.
 
 ***
 

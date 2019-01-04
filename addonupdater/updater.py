@@ -13,7 +13,8 @@ class AddonUpdater():
     """Class for addon updater."""
 
     def __init__(self, token, name, repo=None, test=False,
-                 verbose=False, release=None):
+                 verbose=False, release=None, skip_apk=False, skip_pip=False,
+                 skip_custom=False):
         """Initilalize."""
         self.name = name
         self.repo = repo
@@ -21,6 +22,9 @@ class AddonUpdater():
         self.token = token
         self.verbose = verbose
         self.release = release
+        self.skip_apk = skip_apk
+        self.skip_pip = skip_pip
+        self.skip_custom = skip_custom
         self.github = Github(token)
 
     def update_addon(self):
@@ -37,28 +41,30 @@ class AddonUpdater():
             self.create_release()
         else:
             print("Starting upgrade sequence for", self.name)
+            if not self.skip_custom:
+                # Add-on spesific updates
+                if self.name == 'tautulli':
+                    self.addon_tautulli()
+                elif self.name == 'matrix':
+                    self.addon_matrix()
+                elif self.name == 'phlex':
+                    self.addon_phlex()
+                elif self.name == 'magicmirror':
+                    self.addon_magicmirror()
+                elif self.name == 'mqtt':
+                    self.addon_mqtt()
+                elif self.name == 'home-panel':
+                    self.addon_home_panel()
 
-            # Add-on spesific updates
-            if self.name == 'tautulli':
-                self.addon_tautulli()
-            elif self.name == 'matrix':
-                self.addon_matrix()
-            elif self.name == 'phlex':
-                self.addon_phlex()
-            elif self.name == 'magicmirror':
-                self.addon_magicmirror()
-            elif self.name == 'mqtt':
-                self.addon_mqtt()
-            elif self.name == 'home-panel':
-                self.addon_home_panel()
+            if not self.skip_apk:
+                # Update APK packages
+                print('Checking for apk uppdates')
+                self.update_apk()
 
-            # Update APK packages
-            print('Checking for apk uppdates')
-            self.update_apk()
-
-            # Update PIP packages
-            print('Checking for pip uppdates')
-            self.update_pip()
+            if not self.skip_pip:
+                # Update PIP packages
+                print('Checking for pip uppdates')
+                self.update_pip()
 
     def create_release(self):
         """Create and publish a release."""

@@ -9,10 +9,15 @@ import click
 @click.option('--test', is_flag=True, help="Test run, will not commit.")
 @click.option('--verbose', is_flag=True, help="Print more stuff.")
 @click.option('--release', default=None, help="Publish a release.")
-def cli(token, addon, repo, test, verbose, release):
+@click.option('--skip_apk', default=None, help="Skip apk updates.")
+@click.option('--skip_pip', default=None, help="Skip pip updates.")
+@click.option('--skip_custom', default=None, help="Skip custom updates.")
+def cli(token, addon, repo, test, verbose, release,
+        skip_apk, skip_pip, skip_custom):
     """CLI for this package."""
     from addonupdater.updater import AddonUpdater
-    updater = AddonUpdater(token, addon, repo, test, verbose, release)
+    updater = AddonUpdater(token, addon, repo, test, verbose, release,
+                           skip_apk, skip_pip, skip_custom)
     updater.update_addon()
 
 
