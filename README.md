@@ -48,7 +48,7 @@ param | alias | description
 `--skip_custom` | `None` | Skip custom updates.
 `--skip_pip` | `None` | Skip pip updates.
 `--org` | `None` | Specify GitHub org, defaults to 'hassio-addons'.
-`-pull_request` | `None` | Create a PR instead of pushing directly to master.
+`-pull_request` | `-PR` | Create a PR instead of pushing directly to master.
 
 ***
 
