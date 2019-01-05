@@ -296,6 +296,7 @@ class AddonUpdater():
                 info = msg.split()
                 package = info[2]
                 version = info[-1]
+                msg = msg[11:]
                 body = PR_BODY.format(package=package, version=version)
                 source = ghrepo.get_branch('master')
                 branch = NEW_BRANCH.format(package, version)
