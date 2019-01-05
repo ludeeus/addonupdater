@@ -9,6 +9,8 @@ REPO = "{}/{}"
 NEW_BRANCH = "update-{}-to-version-{}"
 ORG = 'hassio-addons'
 PR_BODY = """
+# Proposed Changes
+
 This PR will upgrade `{package}` to version `{version}`.
 
 This PR was created automatically, please check the "Files changed" tab
@@ -301,12 +303,12 @@ class AddonUpdater():
                 info = msg.split()
                 package = info[2]
                 version = info[-1]
-                msg = msg[11:]
+                title = msg[11:]
                 body = PR_BODY.format(package=package, version=version)
                 if self.fork:
                     user = self.github.get_user()
                     fork_branch = NEW_BRANCH.format(package, version)
-                    branch = user.login + '/' + fork_branch
+                    branch = user.login + ':' + fork_branch
                     print("Forking " + self.org + '/' +
                           self.repo + "to" + branch)
                     user.create_fork(ghrepo)
@@ -332,7 +334,7 @@ class AddonUpdater():
                     print(ghrepo.create_git_ref(ref=ref,
                                                 sha=source.commit.sha))
                     print(ghrepo.update_file(path, msg, content, sha, branch))
-                print(ghrepo.create_pull(msg, body, 'master', branch))
+                print(ghrepo.create_pull(title, body, 'master', branch))
             else:
                 if self.verbose:
                     print("Org", self.org)
