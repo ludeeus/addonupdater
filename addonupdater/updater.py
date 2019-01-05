@@ -27,7 +27,7 @@ class AddonUpdater():
 
     def __init__(self, token, name, repo=None, test=False,
                  verbose=False, release=None, skip_apk=False, skip_pip=False,
-                 skip_custom=False, org=None, pr=False,):
+                 skip_custom=False, org=None, pull_request=False,):
         """Initilalize."""
         self.name = name
         self.repo = repo
