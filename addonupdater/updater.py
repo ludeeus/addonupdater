@@ -9,7 +9,7 @@ REPO = "{}/{}"
 NEW_BRANCH = "update-{}-to-version-{}"
 ORG = 'hassio-addons'
 PR_BODY = """
-This PR will upgrade {package} to version {version}.
+This PR will upgrade `{package}` to version `{version}`.
 
 This PR was created automatically, please check the "Files changed" tab
 before merging!
@@ -134,6 +134,7 @@ class AddonUpdater():
                 if 'apk add' in cmd:
                     all_apk_lines = cmd.replace(' ', '').split('\\\n')
                     for pkg in all_apk_lines:
+                        pkg = pkg.split('\n')[0]
                         if '=' in pkg:
                             if '@legacy' in pkg:
                                 package = pkg.split('@')[0]
@@ -144,7 +145,7 @@ class AddonUpdater():
                             else:
                                 package = pkg.split('=')[0]
                                 branch = 'v3.8'
-                            version = pkg.split('=')[1]
+                            version = pkg.split('=')[1].split()[0]
 
                             this = {'package': package,
                                     'branch': branch,
@@ -153,8 +154,8 @@ class AddonUpdater():
                             packages.append(this)
 
         for pkg in packages:
-            if 'apkadd--no-cache' in pkg['package']:
-                pack = pkg['package'].replace('apkadd--no-cache', "")
+            if 'apkadd--no-cache' in str(pkg['package']):
+                pack = str(pkg['package']).replace('apkadd--no-cache', "")
             else:
                 pack = pkg['package']
             if self.verbose:
@@ -167,7 +168,7 @@ class AddonUpdater():
                 version = data['x86_64']['version']  # Fallback to x86_64
             if self.verbose:
                 print("Current version", pkg['version'])
-                print("Available version", pkg['version'])
+                print("Available version", version.split()[0])
             if version.split()[0] != pkg['version'].split()[0]:
                 this = {'package': package,
                         'version': version,
@@ -181,7 +182,10 @@ class AddonUpdater():
 
                 file = "{}/Dockerfile".format(self.name)
                 remote_file = self.get_file_obj(file)
-
+                if 'apkadd--no-cache' in package['search_string']:
+                    string = package['search_string']
+                    string = string.replace('apkadd--no-cache', "")
+                    package['search_string'] = string
                 search_string = package['search_string'].split('=')
                 replace_string = search_string[0] + '=' + package['version']
                 find_string = package['search_string'].split()[0]
@@ -261,7 +265,7 @@ class AddonUpdater():
             version = data['info']['version']
             if self.verbose:
                 print("Current version", pkg['version'])
-                print("Available version", pkg['version'])
+                print("Available version", version.split()[0])
             if version.split()[0] != pkg['version'].split()[0]:
                 this = {'package': pack,
                         'version': version,
@@ -301,13 +305,13 @@ class AddonUpdater():
                 body = PR_BODY.format(package=package, version=version)
                 if self.fork:
                     user = self.github.get_user()
-                    branch = user.login + '/' + NEW_BRANCH.format(package,
-                                                                  version)
+                    fork_branch = NEW_BRANCH.format(package, version)
+                    branch = user.login + '/' + fork_branch
                     print("Forking " + self.org + '/' +
                           self.repo + "to" + branch)
                     user.create_fork(ghrepo)
                     fork = self.github.get_repo(user.login + '/' + self.repo)
-                    ref = 'refs/heads/' + branch
+                    ref = 'refs/heads/' + fork_branch
                     source = fork.get_branch('master')
                     if self.verbose:
                         print("Org", user.login)
@@ -315,7 +319,8 @@ class AddonUpdater():
                         print("Msg", msg)
                         print("Branch", branch)
                     print(fork.create_git_ref(ref=ref, sha=source.commit.sha))
-                    print(fork.update_file(path, msg, content, sha, branch))
+                    print(fork.update_file(path, msg, content, sha,
+                                           fork_branch))
                 else:
                     branch = NEW_BRANCH.format(package, version)
                     source = ghrepo.get_branch('master')
