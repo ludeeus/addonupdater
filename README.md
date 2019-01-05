@@ -47,6 +47,7 @@ param | alias | description
 `--skip_apk` | `None` | Skip apk updates.
 `--skip_custom` | `None` | Skip custom updates.
 `--skip_pip` | `None` | Skip pip updates.
+`--fork` | `None` | Create a fork before creating a pull request, useful if you don't have access to the repo.
 `--org` | `None` | Specify GitHub org, defaults to 'hassio-addons'.
 `-pull_request` | `-PR` | Create a PR instead of pushing directly to master.
 

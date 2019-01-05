@@ -27,12 +27,13 @@ class AddonUpdater():
 
     def __init__(self, token, name, repo=None, test=False,
                  verbose=False, release=None, skip_apk=False, skip_pip=False,
-                 skip_custom=False, org=None, pull_request=False,):
+                 skip_custom=False, org=None, pull_request=False, fork=False):
         """Initilalize."""
         self.name = name
         self.repo = repo
         self.test = test
         self.token = token
+        self.fork = fork
         self.pull_request = pull_request
         self.verbose = verbose
         self.release = release
@@ -298,17 +299,34 @@ class AddonUpdater():
                 version = info[-1]
                 msg = msg[11:]
                 body = PR_BODY.format(package=package, version=version)
-                source = ghrepo.get_branch('master')
-                branch = NEW_BRANCH.format(package, version)
-                ref = 'refs/heads/' + branch
-                if self.verbose:
-                    print("Org", self.org)
-                    print("Repository", repository)
-                    print("Body", body)
-                    print("Msg", msg)
-                    print("Branch", branch)
-                print(ghrepo.create_git_ref(ref=ref, sha=source.commit.sha))
-                print(ghrepo.update_file(path, msg, content, sha, branch))
+                if self.fork:
+                    user = self.github.get_user()
+                    branch = user.login + '/' + NEW_BRANCH.format(package,
+                                                                  version)
+                    print("Forking " + self.org + '/' +
+                          self.repo + "to" + branch)
+                    user.create_fork(ghrepo)
+                    fork = self.github.get_repo(user.login + '/' + self.repo)
+                    ref = 'refs/heads/' + branch
+                    source = fork.get_branch('master')
+                    if self.verbose:
+                        print("Org", user.login)
+                        print("Repository", user.login + '/' + self.repo)
+                        print("Msg", msg)
+                        print("Branch", branch)
+                    print(fork.create_git_ref(ref=ref, sha=source.commit.sha))
+                    print(fork.update_file(path, msg, content, sha, branch))
+                else:
+                    branch = NEW_BRANCH.format(package, version)
+                    source = ghrepo.get_branch('master')
+                    if self.verbose:
+                        print("Org", self.org)
+                        print("Repository", repository)
+                        print("Msg", msg)
+                        print("Branch", branch)
+                    print(ghrepo.create_git_ref(ref=ref,
+                                                sha=source.commit.sha))
+                    print(ghrepo.update_file(path, msg, content, sha, branch))
                 print(ghrepo.create_pull(msg, body, 'master', branch))
             else:
                 if self.verbose:
