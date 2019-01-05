@@ -6,7 +6,19 @@ from github.GithubException import UnknownObjectException
 
 COMMIT_MSG = ':arrow_up: Upgrades {} to version {}'
 REPO = "{}/{}"
+NEW_BRANCH = "update-{}-to-version-{}"
 ORG = 'hassio-addons'
+PR_BODY = """
+This PR will upgrade {package} to version {version}.
+
+This PR was created automatically, please check the "Files changed" tab
+before merging!
+
+***
+
+This PR was created with [addonupdater][addonupdater] :tada:
+[addonupdater]: https://pypi.org/project/addonupdater/
+"""
 
 
 class AddonUpdater():
@@ -14,12 +26,13 @@ class AddonUpdater():
 
     def __init__(self, token, name, repo=None, test=False,
                  verbose=False, release=None, skip_apk=False, skip_pip=False,
-                 skip_custom=False, org=None):
+                 skip_custom=False, org=None, pr=False,):
         """Initilalize."""
         self.name = name
         self.repo = repo
         self.test = test
         self.token = token
+        self.pull_request = pr
         self.verbose = verbose
         self.release = release
         self.skip_apk = skip_apk
@@ -278,12 +291,32 @@ class AddonUpdater():
         if not self.test:
             repository = "{}/{}".format(self.org, self.repo)
             ghrepo = self.github.get_repo(repository)
-            if self.verbose:
-                print("Repository", repository)
-                print("Path", path)
-                print("Msg", msg)
-                print("Sha", sha)
-            print(ghrepo.update_file(path, msg, content, sha))
+            if self.pull_request:
+                print("Creating new PR for", self.repo)
+                info = msg.split()
+                package = info[2]
+                version = info[-1]
+                body = PR_BODY.format(package=package, version=version)
+                source = ghrepo.get_branch('master')
+                branch = NEW_BRANCH.format(package, version)
+                ref = 'refs/heads/' + branch
+                if self.verbose:
+                    print("Org", self.org)
+                    print("Repository", repository)
+                    print("Body", body)
+                    print("Msg", msg)
+                    print("Branch", branch)
+                #print(ghrepo.create_git_ref(ref=ref, sha=source.commit.sha))
+                #print(ghrepo.update_file(path, msg, content, sha, branch))
+                #print(ghrepo.create_pull(msg, body, 'master', branch))
+            else:
+                if self.verbose:
+                    print("Repository", repository)
+                    print("Path", path)
+                    print("Msg", msg)
+                    print("Sha", sha)
+                print("Creating new commit in master for", self.repo)
+                print(ghrepo.update_file(path, msg, content, sha))
         else:
             print("Test was enabled, skipping commit")
 
