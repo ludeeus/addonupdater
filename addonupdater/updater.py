@@ -17,6 +17,7 @@ before merging!
 ***
 
 This PR was created with [addonupdater][addonupdater] :tada:
+
 [addonupdater]: https://pypi.org/project/addonupdater/
 """
 
@@ -50,7 +51,6 @@ class AddonUpdater():
             print("Addon name", self.name)
             print("Addon repo", self.repo)
             print("GitHub org", self.org)
-            print("GitHub token", self.token)
 
         if self.release is not None:
             self.create_release()
@@ -306,11 +306,12 @@ class AddonUpdater():
                     print("Body", body)
                     print("Msg", msg)
                     print("Branch", branch)
-                #print(ghrepo.create_git_ref(ref=ref, sha=source.commit.sha))
-                #print(ghrepo.update_file(path, msg, content, sha, branch))
-                #print(ghrepo.create_pull(msg, body, 'master', branch))
+                print(ghrepo.create_git_ref(ref=ref, sha=source.commit.sha))
+                print(ghrepo.update_file(path, msg, content, sha, branch))
+                print(ghrepo.create_pull(msg, body, 'master', branch))
             else:
                 if self.verbose:
+                    print("Org", self.org)
                     print("Repository", repository)
                     print("Path", path)
                     print("Msg", msg)
@@ -318,7 +319,7 @@ class AddonUpdater():
                 print("Creating new commit in master for", self.repo)
                 print(ghrepo.update_file(path, msg, content, sha))
         else:
-            print("Test was enabled, skipping commit")
+            print("Test was enabled, skipping PR/commit")
 
     def get_file_obj(self, file):
         """Return the file object."""
