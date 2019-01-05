@@ -33,7 +33,7 @@ class AddonUpdater():
         self.repo = repo
         self.test = test
         self.token = token
-        self.pull_request = pr
+        self.pull_request = pull_request
         self.verbose = verbose
         self.release = release
         self.skip_apk = skip_apk
