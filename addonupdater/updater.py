@@ -1,6 +1,6 @@
 """Update dependecies for add-ons in the community add-on project."""
-import requests
 import json
+import requests
 from alpinepkgs.packages import get_package
 from github import Github
 from github.GithubException import UnknownObjectException
