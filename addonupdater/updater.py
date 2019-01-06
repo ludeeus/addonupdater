@@ -378,7 +378,7 @@ class AddonUpdater():
         remote_buildfile = self.get_file_obj(buildfile)
         buildfile_content = self.get_file_content(remote_buildfile)
 
-        used_file = remote_dockerfile.split('BUILD_FROM=hassioaddons/')[1]
+        used_file = dockerfile_content.split('BUILD_FROM=hassioaddons/')[1]
         used_file = used_file.split('\n')[0]
 
         base = used_file.split(':')[1]
