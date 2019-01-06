@@ -382,7 +382,7 @@ class AddonUpdater():
         used_file = used_file.split('\n')[0]
 
         base = used_file.split(':')[1]
-        version = used_file.split(':')[1]
+        version = used_file.split(':')[1][1:]
 
         if base == 'ubuntu-base':
             repo = self.github.get_repo('hassio-addons/addon-ubuntu-base')
@@ -403,9 +403,10 @@ class AddonUpdater():
             self.commit(dockerfile, msg, new_dockerfile, remote_dockerfile.sha)
 
             current_buildfile = json.loads(buildfile_content)
-            new_dockerfile = current_buildfile.replace(version,
-                                                       remote_version)
-            self.commit(dockerfile, msg, new_dockerfile, remote_buildfile.sha)
+            new_buildfile = str(current_buildfile)
+            new_buildfile = new_buildfile.replace(version, remote_version)
+            new_buildfile = json.dumps(new_buildfile, indent=4, sort_keys=True)
+            self.commit(buildfile, msg, new_buildfile, remote_buildfile.sha)
         else:
             print("Base image already have the newest version", version)
 
