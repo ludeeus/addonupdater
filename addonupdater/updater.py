@@ -1,5 +1,6 @@
 """Update dependecies for add-ons in the community add-on project."""
 import requests
+import json
 from alpinepkgs.packages import get_package
 from github import Github
 from github.GithubException import UnknownObjectException
@@ -29,7 +30,8 @@ class AddonUpdater():
 
     def __init__(self, token, name, repo=None, test=False,
                  verbose=False, release=None, skip_apk=False, skip_pip=False,
-                 skip_custom=False, org=None, pull_request=False, fork=False):
+                 skip_custom=False, org=None, pull_request=False, fork=False,
+                 skip_base=False):
         """Initilalize."""
         self.name = name
         self.repo = repo
@@ -41,6 +43,7 @@ class AddonUpdater():
         self.release = release
         self.skip_apk = skip_apk
         self.skip_pip = skip_pip
+        self.skip_base = skip_base
         self.org = ORG if org is None else org
         self.skip_custom = skip_custom
         self.github = Github(token)
@@ -59,6 +62,12 @@ class AddonUpdater():
             self.create_release()
         else:
             print("Starting upgrade sequence for", self.name)
+
+            if not self.skip_base:
+                # Base image updates
+                print('Checking for base image uppdates')
+                self.base_image()
+
             if not self.skip_custom:
                 # Add-on spesific updates
                 if self.name == 'tautulli':
@@ -310,13 +319,13 @@ class AddonUpdater():
                     fork_branch = NEW_BRANCH.format(package, version)
                     branch = user.login + ':' + fork_branch
                     print("Forking " + self.org + '/' +
-                          self.repo + "to" + branch)
+                          self.repo + " to " + branch)
                     user.create_fork(ghrepo)
                     fork = self.github.get_repo(user.login + '/' + self.repo)
                     ref = 'refs/heads/' + fork_branch
                     source = fork.get_branch('master')
                     if self.verbose:
-                        print("Org", user.login)
+                        print("Forked to user", user.login)
                         print("Repository", user.login + '/' + self.repo)
                         print("Msg", msg)
                         print("Branch", branch)
@@ -357,6 +366,48 @@ class AddonUpdater():
     def get_file_content(self, obj):
         """Return the content of the file."""
         return obj.decoded_content.decode()
+
+    def base_image(self):
+        """Updates for base image."""
+        dockerfile = "{}/Dockerfile".format(self.name)
+        buildfile = "{}/build.json".format(self.name)
+
+        remote_dockerfile = self.get_file_obj(dockerfile)
+        dockerfile_content = self.get_file_content(remote_dockerfile)
+
+        remote_buildfile = self.get_file_obj(buildfile)
+        buildfile_content = self.get_file_content(remote_buildfile)
+
+        used_file = remote_dockerfile.split('BUILD_FROM=hassioaddons/')[1]
+        used_file = used_file.split('\n')[0]
+
+        base = used_file.split(':')[1]
+        version = used_file.split(':')[1]
+
+        if base == 'ubuntu-base':
+            repo = self.github.get_repo('hassio-addons/addon-ubuntu-base')
+        else:
+            repo = self.github.get_repo('hassio-addons/addon-base')
+
+        remote_version = list(repo.get_releases())[0].tag_name
+
+        if self.verbose:
+            print("Current version", version)
+            print("Available version", remote_version)
+
+        if remote_version != version:
+            msg = COMMIT_MSG.format('add-on base image', remote_version)
+
+            new_dockerfile = dockerfile_content.replace(version,
+                                                        remote_version)
+            self.commit(dockerfile, msg, new_dockerfile, remote_dockerfile.sha)
+
+            current_buildfile = json.loads(buildfile_content)
+            new_dockerfile = current_buildfile.replace(version,
+                                                       remote_version)
+            self.commit(dockerfile, msg, new_dockerfile, remote_buildfile.sha)
+        else:
+            print("Base image already have the newest version", version)
 
     def addon_tautulli(self):
         """Spesial updates for tautulli."""
