@@ -382,14 +382,14 @@ class AddonUpdater():
         used_file = used_file.split('\n')[0]
 
         base = used_file.split(':')[1]
-        version = used_file.split(':')[1][1:]
+        version = used_file.split(':')[1]
 
         if base == 'ubuntu-base':
             repo = self.github.get_repo('hassio-addons/addon-ubuntu-base')
         else:
             repo = self.github.get_repo('hassio-addons/addon-base')
 
-        remote_version = list(repo.get_releases())[0].tag_name
+        remote_version = list(repo.get_releases())[0].tag_name[1:]
 
         if self.verbose:
             print("Current version", version)
