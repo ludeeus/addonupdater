@@ -368,7 +368,7 @@ class AddonUpdater():
         return obj.decoded_content.decode()
 
     def base_image(self):
-        """Updates for base image."""
+        """Update for base image."""
         dockerfile = "{}/Dockerfile".format(self.name)
         buildfile = "{}/build.json".format(self.name)
 
