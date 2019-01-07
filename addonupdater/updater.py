@@ -405,7 +405,7 @@ class AddonUpdater():
             current_buildfile = json.loads(buildfile_content)
             new_buildfile = {}
             for item in current_buildfile:
-                if isinstance(item,dict):
+                if isinstance(item, dict):
                     new_buildfile[item] = {}
                     for subitem in current_buildfile[item]:
                         value = current_buildfile[item][subitem]
