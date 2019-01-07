@@ -405,11 +405,14 @@ class AddonUpdater():
             current_buildfile = json.loads(buildfile_content)
             new_buildfile = {}
             for item in current_buildfile:
-                new_buildfile[item] = {}
-                for subitem in current_buildfile[item]:
-                    value = current_buildfile[item][subitem]
-                    value = value.replace(version, remote_version)
-                    new_buildfile[item][subitem] = value
+                if isinstance(item,dict):
+                    new_buildfile[item] = {}
+                    for subitem in current_buildfile[item]:
+                        value = current_buildfile[item][subitem]
+                        value = value.replace(version, remote_version)
+                        new_buildfile[item][subitem] = value
+                else:
+                    new_buildfile[item] = current_buildfile[item]
             new_buildfile = json.dumps(new_buildfile, indent=4, sort_keys=True)
             self.commit(buildfile, msg, new_buildfile, remote_buildfile.sha)
         else:
