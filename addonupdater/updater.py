@@ -396,7 +396,8 @@ class AddonUpdater():
             print("Available version", remote_version)
 
         if remote_version != version:
-            msg = COMMIT_MSG.format('add-on base image', remote_version)
+            msg = COMMIT_MSG.format('add-on base image in Dockerfile',
+                                    remote_version)
 
             new_dockerfile = dockerfile_content.replace(version,
                                                         remote_version)
@@ -405,7 +406,7 @@ class AddonUpdater():
             current_buildfile = json.loads(buildfile_content)
             new_buildfile = {}
             for item in current_buildfile:
-                if isinstance(item, dict):
+                if isinstance(current_buildfile[item], dict):
                     new_buildfile[item] = {}
                     for subitem in current_buildfile[item]:
                         value = current_buildfile[item][subitem]
@@ -413,6 +414,8 @@ class AddonUpdater():
                         new_buildfile[item][subitem] = value
                 else:
                     new_buildfile[item] = current_buildfile[item]
+            msg = COMMIT_MSG.format('add-on base image in build file',
+                                    remote_version)
             new_buildfile = json.dumps(new_buildfile, indent=4, sort_keys=True)
             self.commit(buildfile, msg, new_buildfile, remote_buildfile.sha)
         else:
