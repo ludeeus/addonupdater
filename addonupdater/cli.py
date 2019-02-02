@@ -12,7 +12,6 @@ import click
 @click.option('--skip_apk', is_flag=True, help="Skip apk updates.")
 @click.option('--skip_pip', is_flag=True, help="Skip pip updates.")
 @click.option('--skip_custom', is_flag=True, help="Skip custom updates.")
-@click.option('--fork', is_flag=True, help="Fork before creating a PR.")
 @click.option('--pull_request', '-PR', is_flag=True, help="Create a PR instead"
               "of commiting to master.")
 def cli(
