@@ -32,6 +32,8 @@ class AddonUpdater():
         """Initilalize."""
         self.name = name
         self.repo = repo
+        if repo is None:
+            self.repo = "addon-" + name
         self.test = test
         self.token = token
         self.pull_request = pull_request
@@ -50,9 +52,6 @@ class AddonUpdater():
 
     def update_addon(self):
         """Run through updates for an addon."""
-        if self.repo is None:
-            self.repo = "addon-" + self.name
-
         if self.verbose:
             print("Addon name", self.name)
             print("Addon repo", self.repo)
