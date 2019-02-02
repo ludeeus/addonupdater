@@ -87,6 +87,13 @@ class AddonUpdater():
             print('Checking for pip uppdates')
             self.repoupdater.update_pip()
 
+    def get_file_obj(self, file):
+        """Return the file object."""
+        repository = "{}/{}".format(self.org, self.repo)
+        ghrepo = self.github.get_repo(repository)
+        obj = ghrepo.get_contents(file)
+        return obj
+
     def addon_tautulli(self):
         """Spesial updates for tautulli."""
         print("Checking Tautulli version")
@@ -100,7 +107,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('ENV TAUTULLI_VERSION ')[1]
         file_version = file_version.split('\n')[0]
@@ -129,7 +136,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('releases/download/')[1]
         file_version = file_version.split('/')[0]
@@ -150,7 +157,7 @@ class AddonUpdater():
         repo = self.github.get_repo('d8ahazard/Phlex')
         remote_version = list(repo.get_commits())[0].sha
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('Phlex/archive/')[1]
         file_version = file_version.split('.zip')[0]
@@ -178,7 +185,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('ENV MM_VERSION = ')[1]
         file_version = file_version.split('\n')[0]
@@ -200,7 +207,7 @@ class AddonUpdater():
         repo = self.github.get_repo('hivemq/hivemq-mqtt-web-client')
         remote_version = list(repo.get_commits())[0].sha
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('client/archive/')[1]
         file_version = file_version.split('.zip')[0]
@@ -229,7 +236,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('clone --branch ')[1]
         file_version = file_version.split(' --depth')[0]
@@ -257,7 +264,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('releases/download/')[1]
         file_version = file_version.split('/')[0]
@@ -285,7 +292,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('releases/download/')[1]
         file_version = file_version.split('/')[0]
@@ -311,7 +318,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('clone --branch ')[1]
         file_version = file_version.split(' --depth')[0]
@@ -340,7 +347,7 @@ class AddonUpdater():
             else:
                 break
         file = "{}/Dockerfile".format(self.name)
-        remote_file = self.repoupdater.get_file_obj(file)
+        remote_file = self.get_file_obj(file)
         masterfile = self.repoupdater.get_file_content(remote_file)
         file_version = masterfile.split('--branch ')[1]
         file_version = file_version.split(' --depth')[0]
