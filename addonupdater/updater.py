@@ -45,7 +45,7 @@ class AddonUpdater():
             token=self.token, repo="{}/{}".format(self.org, self.repo),
             apk=True if not self.skip_apk else False,
             pip=True if not self.skip_pip else False, test=self.test,
-            verbose=self.verbose, dockerpath=self.name,
+            verbose=self.verbose, docker_path=self.name,
             python_req_path=self.name, pull_request=self.pull_request)
 
     def update_addon(self):
