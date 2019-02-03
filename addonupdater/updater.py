@@ -28,7 +28,7 @@ class AddonUpdater():
     def __init__(
             self, token, name, repo=None, test=False, verbose=False,
             skip_apk=False, skip_pip=False, skip_custom=False, org=None,
-            pull_request=False):
+            pull_request=False, apk_version=3.9):
         """Initilalize."""
         self.name = name
         self.repo = repo
@@ -38,6 +38,7 @@ class AddonUpdater():
         self.token = token
         self.pull_request = pull_request
         self.verbose = verbose
+        self.apk_version = apk_version
         self.skip_apk = skip_apk
         self.skip_pip = skip_pip
         self.org = ORG if org is None else org
@@ -48,7 +49,8 @@ class AddonUpdater():
             apk=True if not self.skip_apk else False,
             pip=True if not self.skip_pip else False, test=self.test,
             verbose=self.verbose, docker_path=self.name,
-            python_req_path=self.name, pull_request=self.pull_request)
+            python_req_path=self.name, pull_request=self.pull_request,
+            apk_version=self.apk_version)
 
     def update_addon(self):
         """Run through updates for an addon."""

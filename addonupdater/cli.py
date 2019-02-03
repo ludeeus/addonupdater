@@ -8,6 +8,9 @@ import click
 @click.option('--repo', '-R', default=None, help='Addon repo.')
 @click.option('--test', is_flag=True, help="Test run, will not commit.")
 @click.option('--verbose', is_flag=True, help="Print more stuff.")
+@click.option(
+    "--apk_version", type=float, default=3.9,
+    help="Default target APK version.")
 @click.option('--org', default=None, help="Specify GitHub org.")
 @click.option('--skip_apk', is_flag=True, help="Skip apk updates.")
 @click.option('--skip_pip', is_flag=True, help="Skip pip updates.")
@@ -16,12 +19,12 @@ import click
               "of commiting to master.")
 def cli(
         token, addon, repo, test, verbose, skip_apk, skip_pip, skip_custom,
-        org, pull_request):
+        org, pull_request, apk_version):
     """CLI for this package."""
     from addonupdater.updater import AddonUpdater
     updater = AddonUpdater(
         token, addon, repo, test, verbose, skip_apk, skip_pip, skip_custom,
-        org, pull_request)
+        org, pull_request, apk_version)
     updater.update_addon()
 
 

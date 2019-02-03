@@ -43,12 +43,11 @@ param | alias | description
 `--repo` | `-R` | Name of the repo for the add-on, this is optional and defaults to `addon-ADDONNAME`.
 `--test` | `None` | If this flag is used commits will be omitted.
 `--verbose` | `None` | Print more stuff to the console.
-`--release` | `None` | Creates a new release this argument require release version eg. `v1.0.3`.
+`--apk_version` | `None` | Target version of apk packages, like `3.9`.
 `--skip_apk` | `None` | Skip apk updates.
 `--skip_custom` | `None` | Skip custom updates.
 `--skip_pip` | `None` | Skip pip updates.
 `--skip_base` | `None` | Skip base image updates.
-`--fork` | `None` | Create a fork before creating a pull request, useful if you don't have access to the repo.
 `--org` | `None` | Specify GitHub org, defaults to 'hassio-addons'.
 `-pull_request` | `-PR` | Create a PR instead of pushing directly to master.
 
