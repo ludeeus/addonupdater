@@ -11,7 +11,7 @@ setuptools.setup(
     author_email="ludeeus@gmail.com",
     description="",
     long_description=LONG,
-    install_requires=['click', 'PyGithub>=1.43.5', 'repoupdater==0.2.2'],
+    install_requires=['click', 'PyGithub>=1.43.5', 'repoupdater==0.2.3'],
     long_description_content_type="text/markdown",
     url="https://github.com/ludeeus/addonupdater",
     packages=setuptools.find_packages(),
